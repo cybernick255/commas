@@ -6,12 +6,24 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
-struct CommasApp: App {
-    var body: some Scene {
-        WindowGroup {
+struct CommasApp: App
+{
+    var body: some Scene
+    {
+        WindowGroup
+        {
             ContentView()
         }
+        .modelContainer(for: Snapshot.self)
     }
 }
+
+
+
+// MARK: Notes
+// Searchable comments:
+// - //Note:
+// - //Error:

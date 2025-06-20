@@ -6,19 +6,18 @@
 //
 
 import SwiftUI
+import SwiftData
 
-struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+struct ContentView: View
+{
+    var body: some View
+    {
+        NetWorthView()
     }
 }
 
-#Preview {
+#Preview
+{
     ContentView()
+        .modelContainer(SampleData.shared.modelContainer)
 }

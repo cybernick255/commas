@@ -12,7 +12,17 @@ struct ContentView: View
 {
     var body: some View
     {
-        NetWorthView()
+        TabView
+        {
+            Tab("", systemImage: "house")
+            {
+                HomeView()
+            }
+            Tab("", systemImage: "person")
+            {
+                ProfileView()
+            }
+        }
     }
 }
 

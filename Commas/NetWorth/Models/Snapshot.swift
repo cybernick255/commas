@@ -66,36 +66,61 @@ class Snapshot
     }
     
     static let sampleData: [Snapshot] =
-    [
-        Snapshot(
-            date: Calendar.current.date(from: DateComponents(timeZone: .gmt, year: 2025, month: 6, day: 18))!,
-            itemValues:
-                [
-                    NetWorthItemValue(
-                        item: sampleAsset,
-                        value: 1000
-                    ),
-                    NetWorthItemValue(
-                        item: sampleLiability,
-                        value: 500
-                    )
-                ]
-        ),
-        Snapshot(
-            date: Calendar.current.date(from: DateComponents(timeZone: .gmt, year: 2025, month: 6, day: 19))!,
-            itemValues:
-                [
-                    NetWorthItemValue(
-                        item: sampleAsset,
-                        value: 1000
-                    ),
-                    NetWorthItemValue(
-                        item: sampleLiability,
-                        value: 0
-                    )
-                ]
-        )
-    ]
+    {
+        var snapshots: [Snapshot] = []
+        
+        let calendar = Calendar.current
+        let baseDate = calendar.date(byAdding: .day, value: -99, to: Date())!
+        
+        for offset in 0..<100
+        {
+            let currentDate = calendar.date(byAdding: .day, value: offset, to: baseDate)!
+            let components = calendar.dateComponents(in: TimeZone(secondsFromGMT: 0)!, from: currentDate)
+            
+            let year = components.year!
+            let month = components.month!
+            let day = components.day!
+            
+            // Simulate trends
+            // Days 0-20: bumpy plateau
+            // Days 20-40: steep rise
+            // Days 40-55: sharp drop
+            // Days 55-70: continue drop
+            // Days 70-85: jagged bottom
+            // Days 85-99: recovery
+            let trendFactor: Int
+            
+            switch offset
+            {
+            case 0..<20:
+                trendFactor = 9_000 + Int.random(in: -500...500) // initial plateau with bumps
+            case 20..<40:
+                trendFactor = 10_000 + (offset - 20) * 700 + Int.random(in: -300...300) // steep rise
+            case 40..<55:
+                trendFactor = 24_000 - (offset - 40) * 800 + Int.random(in: -300...300) // sharp drop
+            case 55..<70:
+                trendFactor = 12_000 - (offset - 55) * 150 + Int.random(in: -400...400) // continue drop
+            case 70..<85:
+                trendFactor = 8_000 + Int.random(in: -600...600) // jagged bottom
+            default:
+                trendFactor = 9_000 + (offset - 85) * 250 + Int.random(in: -200...200) // recovery
+            }
+            
+            let assets: [NetWorthItemValue] =
+            [
+                NetWorthItemValue(item: sampleAsset, value: trendFactor + Int.random(in: 0...500)),
+                NetWorthItemValue(item: sampleAsset2, value: 2_000 + Int.random(in: 0...1_000))
+            ]
+            let liabilities: [NetWorthItemValue] =
+            [
+                NetWorthItemValue(item: sampleLiability, value: max(1, Int(Double(trendFactor) * 0.4) + Int.random(in: -300...300)))
+            ]
+            
+            snapshots.append(Snapshot(date: calendar.date(from: DateComponents(timeZone: .gmt, year: year, month: month, day: day))!, itemValues: assets + liabilities))
+        }
+        
+        return snapshots
+    }()
 }
 
 let errorSnapshot: Snapshot =
@@ -123,6 +148,12 @@ Snapshot(
 let sampleAsset: NetWorthItem =
 NetWorthItem(
     name: "Cash",
+    isAsset: true
+)
+
+let sampleAsset2: NetWorthItem =
+NetWorthItem(
+    name: "Brokerage",
     isAsset: true
 )
 

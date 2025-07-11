@@ -69,7 +69,6 @@ struct NetWorthItemValueAddView: View
                 }
             }
         }
-        .interactiveDismissDisabled()
     }
     
     func addItemValue()

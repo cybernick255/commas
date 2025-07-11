@@ -181,7 +181,7 @@ extension View
         self
             .font(.title2)
             .fontWeight(.medium)
-            .frame(width: geometry.size.width * 0.2, height: geometry.size.width * 0.15)
+            .frame(width: geometry.size.width * 0.2, height: geometry.size.width * 0.1)
             .background(RoundedRectangle(cornerRadius: 16).foregroundStyle(colorScheme == .dark ? .black : .white))
     }
 }

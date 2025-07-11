@@ -61,6 +61,7 @@ struct NetWorthItemValueEditView: View
                             Text("Delete")
                                 .foregroundStyle(.red)
                         }
+                        .padding(.bottom)
                     }
                 }
             }
@@ -99,7 +100,6 @@ struct NetWorthItemValueEditView: View
                 Text("This can't be undone.")
             }
         }
-        .interactiveDismissDisabled()
     }
     
     func deleteItemValue()

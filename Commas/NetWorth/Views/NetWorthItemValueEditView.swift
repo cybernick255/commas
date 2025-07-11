@@ -16,6 +16,7 @@ struct NetWorthItemValueEditView: View
     
     @State private var name: String
     @State private var number: CustomNumber
+    @State private var showSavedView: Bool = false
     
     @State private var presentDeleteAlert: Bool = false
     
@@ -30,75 +31,97 @@ struct NetWorthItemValueEditView: View
     
     var body: some View
     {
-        NavigationStack
+        ZStack
         {
-            GeometryReader
-            { geometry in
-                ZStack
-                {
-                    List
+            NavigationStack
+            {
+                GeometryReader
+                { geometry in
+                    ZStack
                     {
-                        TextField("Name", text: $name)
-                            .submitLabel(.done)
-                        Section
+                        List
                         {
-                            HStack
+                            TextField("Name", text: $name)
+                                .submitLabel(.done)
+                            Section
                             {
-                                Spacer()
-                                CustomNumberPadView(number: $number, geometry: geometry)
-                                Spacer()
+                                HStack
+                                {
+                                    Spacer()
+                                    CustomNumberPadView(number: $number, geometry: geometry)
+                                    Spacer()
+                                }
+                                .listRowBackground(Color.clear)
+                                .buttonStyle(.plain)
                             }
-                            .listRowBackground(Color.clear)
-                            .buttonStyle(.plain)
                         }
-                    }
-                    
-                    VStack
-                    {
-                        Spacer()
-                        Button(action: { presentDeleteAlert = true })
-                        {
-                            Text("Delete")
-                                .foregroundStyle(.red)
-                        }
-                        .padding(.bottom)
-                    }
-                }
-            }
-            .navigationTitle(itemValue.item.isAsset ? "Edit Asset" : "Edit Liability")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar
-            {
-                ToolbarItem(placement: .confirmationAction)
-                {
-                    Button("Save")
-                    {
-                        snapshot.editItemValue(itemValue: itemValue, name: name, value: number.int)
                         
-                        dismiss()
+                        VStack
+                        {
+                            Spacer()
+                            Button(action: { presentDeleteAlert = true })
+                            {
+                                Text("Delete")
+                                    .foregroundStyle(.red)
+                            }
+                            .padding(.bottom)
+                        }
                     }
                 }
-                ToolbarItem(placement: .cancellationAction)
+                .navigationTitle(itemValue.item.isAsset ? "Edit Asset" : "Edit Liability")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar
                 {
-                    Button("Cancel")
+                    ToolbarItem(placement: .confirmationAction)
                     {
+                        Button("Save")
+                        {
+                            editItemValue()
+                        }
+                    }
+                    ToolbarItem(placement: .cancellationAction)
+                    {
+                        Button("Cancel")
+                        {
+                            dismiss()
+                        }
+                    }
+                }
+                .alert("Delete this item?", isPresented: $presentDeleteAlert)
+                {
+                    Button("Cancel", role: .cancel) {}
+                    Button("Delete", role: .destructive)
+                    {
+                        deleteItemValue()
                         dismiss()
                     }
                 }
-            }
-            .alert("Delete this item?", isPresented: $presentDeleteAlert)
-            {
-                Button("Cancel", role: .cancel) {}
-                Button("Delete", role: .destructive)
+            message:
                 {
-                    deleteItemValue()
-                    dismiss()
+                    Text("This can't be undone.")
                 }
             }
-        message:
+            
+            if showSavedView
             {
-                Text("This can't be undone.")
+                NetWorthItemValueSavedView()
+                    .transition(.opacity)
             }
+        }
+    }
+    
+    func editItemValue()
+    {
+        snapshot.editItemValue(itemValue: itemValue, name: name, value: number.int)
+        
+        withAnimation
+        {
+            showSavedView = true
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1)
+        {
+            dismiss()
         }
     }
     

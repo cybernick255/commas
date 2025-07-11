@@ -18,55 +18,65 @@ struct NetWorthItemValueAddView: View
     
     @State private var itemName: String = ""
     @State private var number: CustomNumber = CustomNumber()
+    @State private var showSavedView: Bool = false
     
     var body: some View
     {
-        NavigationStack
+        ZStack
         {
-            GeometryReader
-            { geometry in
-                List
-                {
-                    Picker("Type", selection: $selectedItemOption)
+            NavigationStack
+            {
+                GeometryReader
+                { geometry in
+                    List
                     {
-                        ForEach(itemOptions, id: \.self)
+                        Picker("Type", selection: $selectedItemOption)
                         {
-                            Text($0)
+                            ForEach(itemOptions, id: \.self)
+                            {
+                                Text($0)
+                            }
+                        }
+                        TextField("Name", text: $itemName)
+                            .submitLabel(.done)
+                        Section
+                        {
+                            HStack
+                            {
+                                Spacer()
+                                CustomNumberPadView(number: $number, geometry: geometry)
+                                Spacer()
+                            }
+                            .listRowBackground(Color.clear)
+                            .buttonStyle(.plain)
                         }
                     }
-                    TextField("Name", text: $itemName)
-                        .submitLabel(.done)
-                    Section
+                    .navigationTitle(formattedDate(snapshot.date))
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar
                     {
-                        HStack
+                        ToolbarItem(placement: .cancellationAction)
                         {
-                            Spacer()
-                            CustomNumberPadView(number: $number, geometry: geometry)
-                            Spacer()
+                            Button("Cancel")
+                            {
+                                dismiss()
+                            }
                         }
-                        .listRowBackground(Color.clear)
-                        .buttonStyle(.plain)
+                        ToolbarItem(placement: .confirmationAction)
+                        {
+                            Button("Save")
+                            {
+                                addItemValue()
+                            }
+                        }
                     }
                 }
-                .navigationTitle(formattedDate(snapshot.date))
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar
-                {
-                    ToolbarItem(placement: .cancellationAction)
-                    {
-                        Button("Cancel")
-                        {
-                            dismiss()
-                        }
-                    }
-                    ToolbarItem(placement: .confirmationAction)
-                    {
-                        Button("Save")
-                        {
-                            addItemValue()
-                        }
-                    }
-                }
+            }
+            
+            if showSavedView
+            {
+                NetWorthItemValueSavedView()
+                    .transition(.opacity)
             }
         }
     }
@@ -94,7 +104,15 @@ struct NetWorthItemValueAddView: View
             )
         }
         
-        dismiss()
+        withAnimation
+        {
+            showSavedView = true
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1)
+        {
+            dismiss()
+        }
     }
 }
 

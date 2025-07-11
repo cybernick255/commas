@@ -22,61 +22,70 @@ struct NetWorthListView: View
         VStack
         {
             ListSegmentedPickerView(selectedRange: $selectedRange)
-            List
+            if selectedRange == .assets
             {
-                if selectedRange == .assets
+                if snapshot.itemValues.filter({ $0.item.isAsset }).isEmpty
                 {
-                    if snapshot.itemValues.filter({ $0.item.isAsset }).isEmpty
-                    {
-                        ContentUnavailableView("No Assets", systemImage: "chart.bar.doc.horizontal", description: nil)
-                    }
-                    else
-                    {
-                        ForEach(snapshot.itemValues.filter({ $0.item.isAsset }).sorted { $0.value > $1.value })
-                        { asset in
-                            Button(action: {chosenItemValue = asset})
-                            {
-                                HStack
-                                {
-                                    VStack(alignment: .leading)
-                                    {
-                                        Text(asset.item.name)
-                                        Text(formatValue(value: asset.value))
-                                            .font(.headline)
-                                    }
-                                    Spacer()
-                                    Image(systemName: "pencil")
-                                }
-                                .foregroundStyle(colorScheme == .light ? .black : .white)
-                            }
-                        }
-                    }
+                    ContentUnavailableView("No Assets", systemImage: "chart.bar.doc.horizontal", description: nil)
                 }
                 else
                 {
-                    if snapshot.itemValues.filter({ !$0.item.isAsset }).isEmpty
-                    {
-                        ContentUnavailableView("No Liabilities", systemImage: "chart.bar.doc.horizontal", description: nil)
-                    }
-                    else
-                    {
-                        ForEach(snapshot.itemValues.filter({ !$0.item.isAsset }).sorted { $0.value > $1.value })
-                        { liability in
-                            Button(action: {chosenItemValue = liability})
+                    ForEach(snapshot.itemValues.filter({ $0.item.isAsset }).sorted { $0.value > $1.value })
+                    { asset in
+                        Button(action: {chosenItemValue = asset})
+                        {
+                            HStack
                             {
-                                HStack
+                                VStack(alignment: .leading)
                                 {
-                                    VStack(alignment: .leading)
-                                    {
-                                        Text(liability.item.name)
-                                        Text(formatValue(value: liability.value))
-                                            .font(.headline)
-                                    }
-                                    Spacer()
-                                    Image(systemName: "pencil")
+                                    Text(asset.item.name)
+                                    Text(formatValue(value: asset.value))
+                                        .font(.headline)
                                 }
-                                .foregroundStyle(colorScheme == .light ? .black : .white)
+                                Spacer()
+                                Image(systemName: "pencil")
                             }
+                            .padding()
+                            .foregroundStyle(colorScheme == .light ? .black : .white)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(.clear)
+                                    .stroke(colorScheme == .dark ? .white : .black, lineWidth: 2)
+                            )
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if snapshot.itemValues.filter({ !$0.item.isAsset }).isEmpty
+                {
+                    ContentUnavailableView("No Liabilities", systemImage: "chart.bar.doc.horizontal", description: nil)
+                }
+                else
+                {
+                    ForEach(snapshot.itemValues.filter({ !$0.item.isAsset }).sorted { $0.value > $1.value })
+                    { liability in
+                        Button(action: {chosenItemValue = liability})
+                        {
+                            HStack
+                            {
+                                VStack(alignment: .leading)
+                                {
+                                    Text(liability.item.name)
+                                    Text(formatValue(value: liability.value))
+                                        .font(.headline)
+                                }
+                                Spacer()
+                                Image(systemName: "pencil")
+                            }
+                            .padding()
+                            .foregroundStyle(colorScheme == .light ? .black : .white)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(.clear)
+                                    .stroke(colorScheme == .dark ? .white : .black, lineWidth: 2)
+                            )
                         }
                     }
                 }

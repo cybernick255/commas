@@ -63,7 +63,7 @@ struct NetWorthChartView: View
             {
                 // Leave empty
             }
-            .frame(width: geometry.size.width, height: geometry.size.height * 0.3)
+            .frame(height: geometry.size.height * 0.3)
             .onAppear(perform: fetchSnapshots)
             .onChange(of: selectedRange, fetchSnapshots)
             .onChange(of: snapshot.netWorth, fetchSnapshots)

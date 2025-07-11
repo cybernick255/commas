@@ -15,25 +15,29 @@ struct NetWorthHistoryDetailView: View
         
     var body: some View
     {
-        VStack
+        ScrollView
         {
-            NetWorthHeaderView(snapshot: snapshot)
-            NetWorthListView(snapshot: snapshot)
-        }
-        .padding()
-        .navigationTitle(formattedDate(snapshot.date))
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar
-        {
-            ToolbarItem(placement: .topBarTrailing)
+            VStack
             {
-                Button("", systemImage: "plus", action: {presentSheet = true})
+                NetWorthHeaderView(snapshot: snapshot)
+                NetWorthListView(snapshot: snapshot)
+            }
+            .padding()
+            .navigationTitle(formattedDate(snapshot.date))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar
+            {
+                ToolbarItem(placement: .topBarTrailing)
+                {
+                    Button("", systemImage: "plus", action: {presentSheet = true})
+                }
+            }
+            .sheet(isPresented: $presentSheet)
+            {
+                NetWorthItemValueAddView(snapshot: snapshot)
             }
         }
-        .sheet(isPresented: $presentSheet)
-        {
-            NetWorthItemValueAddView(snapshot: snapshot)
-        }
+        .scrollIndicators(.hidden)
     }
 }
 

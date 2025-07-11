@@ -41,27 +41,32 @@ struct NetWorthView: View
         {
             GeometryReader
             { geometry in
-                VStack
+                ScrollView
                 {
-                    NetWorthHeaderView(snapshot: currentSnapshot)
-                    NetWorthChartView(geometry: geometry, snapshot: currentSnapshot)
-                    NavigationLink(destination: NetWorthHistoryView())
+                    VStack
                     {
-                        HStack
+                        NetWorthHeaderView(snapshot: currentSnapshot)
+                        NetWorthChartView(geometry: geometry, snapshot: currentSnapshot)
+                        NavigationLink(destination: NetWorthHistoryView())
                         {
-                            Text(formattedDate(currentSnapshot.date))
-                                .font(.title2)
-                            Spacer()
-                            Image(systemName: "chevron.right")
+                            HStack
+                            {
+                                Text(formattedDate(currentSnapshot.date))
+                                    .font(.title2)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                            }
+                            .padding(.vertical)
+                            .foregroundStyle(colorScheme == .light ? .black : .white)
                         }
-                        .padding(.vertical)
-                        .foregroundStyle(colorScheme == .light ? .black : .white)
+                        
+                        NetWorthListView(snapshot: currentSnapshot)
                     }
-                    
-                    NetWorthListView(snapshot: currentSnapshot)
+                    .padding()
+                    .frame(width: geometry.size.width)
                 }
+                .scrollIndicators(.hidden)
             }
-            .padding()
             .onAppear(perform: fillInMissingSnapshots)
             .toolbar
             {

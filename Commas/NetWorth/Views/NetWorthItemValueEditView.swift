@@ -66,6 +66,7 @@ struct NetWorthItemValueEditView: View
                             }
                             .padding(.bottom)
                         }
+                        .ignoresSafeArea(.keyboard)
                     }
                 }
                 .navigationTitle(itemValue.item.isAsset ? "Edit Asset" : "Edit Liability")

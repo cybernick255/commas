@@ -10,88 +10,89 @@ import SwiftUI
 struct CustomNumberPadView: View
 {
     @Binding var number: CustomNumber
-    
     let geometry: GeometryProxy
+    
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View
     {
         HStack
         {
             Spacer()
-            VStack
+            VStack(spacing: geometry.size.width * 0.05)
             {
                 Text(number.string)
-                HStack
+                HStack(spacing: geometry.size.width * 0.05)
                 {
                     Button(action: { number.appendDigit(1) })
                     {
                         Text("1")
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.width * 0.15)
+                            .modifierNumberPadKey(geometry: geometry, colorScheme: colorScheme)
                     }
                         
                     Button(action: { number.appendDigit(2) })
                     {
                         Text("2")
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.width * 0.15)
+                            .modifierNumberPadKey(geometry: geometry, colorScheme: colorScheme)
                     }
                     Button(action: { number.appendDigit(3) })
                     {
                         Text("3")
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.width * 0.15)
+                            .modifierNumberPadKey(geometry: geometry, colorScheme: colorScheme)
                     }
                 }
-                HStack
+                HStack(spacing: geometry.size.width * 0.05)
                 {
                     Button(action: { number.appendDigit(4) })
                     {
                         Text("4")
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.width * 0.15)
+                            .modifierNumberPadKey(geometry: geometry, colorScheme: colorScheme)
                     }
                     Button(action: { number.appendDigit(5) })
                     {
                         Text("5")
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.width * 0.15)
+                            .modifierNumberPadKey(geometry: geometry, colorScheme: colorScheme)
                     }
                     Button(action: { number.appendDigit(6) })
                     {
                         Text("6")
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.width * 0.15)
+                            .modifierNumberPadKey(geometry: geometry, colorScheme: colorScheme)
                     }
                 }
-                HStack
+                HStack(spacing: geometry.size.width * 0.05)
                 {
                     Button(action: { number.appendDigit(7) })
                     {
                         Text("7")
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.width * 0.15)
+                            .modifierNumberPadKey(geometry: geometry, colorScheme: colorScheme)
                     }
                     Button(action: { number.appendDigit(8) })
                     {
                         Text("8")
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.width * 0.15)
+                            .modifierNumberPadKey(geometry: geometry, colorScheme: colorScheme)
                     }
                     Button(action: { number.appendDigit(9) })
                     {
                         Text("9")
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.width * 0.15)
+                            .modifierNumberPadKey(geometry: geometry, colorScheme: colorScheme)
                     }
                 }
-                HStack
+                HStack(spacing: geometry.size.width * 0.05)
                 {
                     Button(action: { number.togglePositiveNegative() })
                     {
                         Image(systemName: "plus.forwardslash.minus")
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.width * 0.15)
+                            .modifierNumberPadKey(geometry: geometry, colorScheme: colorScheme)
                     }
                     Button(action: { number.appendDigit(0) })
                     {
                         Text("0")
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.width * 0.15)
+                            .modifierNumberPadKey(geometry: geometry, colorScheme: colorScheme)
                     }
                     Button(action: { number.deleteLastDigit() })
                     {
                         Image(systemName: "chevron.left")
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.width * 0.15)
+                            .modifierNumberPadKey(geometry: geometry, colorScheme: colorScheme)
                     }
                 }
             }
@@ -122,6 +123,7 @@ struct CustomNumber
     {
         int /= 10
         self.string = formatValue(value: int)
+        triggerHaptic(.selection)
         print(int)
     }
     
@@ -136,6 +138,7 @@ struct CustomNumber
             int *= -1
             self.string = formatValue(value: int)
         }
+        triggerHaptic(.selection)
     }
     
     mutating func appendDigit(_ digit: Int)
@@ -165,5 +168,20 @@ struct CustomNumber
             }
             self.string = formatValue(value: int)
         }
+        triggerHaptic(.selection)
+    }
+}
+
+
+
+extension View
+{
+    func modifierNumberPadKey(geometry: GeometryProxy, colorScheme: ColorScheme) -> some View
+    {
+        self
+            .font(.title2)
+            .fontWeight(.medium)
+            .frame(width: geometry.size.width * 0.2, height: geometry.size.width * 0.15)
+            .background(RoundedRectangle(cornerRadius: 16).foregroundStyle(colorScheme == .dark ? .black : .white))
     }
 }
